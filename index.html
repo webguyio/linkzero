@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="LinkZero: the safest link shortener on the planet. No tracking, no accounts, no agenda.">
+	<meta name="keywords" content="link shortener, url shortener, privacy, no tracking, free">
+	<meta name="theme-color" content="#00e5a0">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://lk0.org/">
+	<meta property="og:title" content="LinkZero">
+	<meta property="og:description" content="The safest link shortener on the planet. No tracking, no accounts, no agenda.">
+	<meta property="og:image" content="https://lk0.org/icon.png">
+	<meta name="twitter:image" content="https://lk0.org/icon.png">
+	<meta name="twitter:card" content="summary_large_image">
+
+	<title>LinkZero | The Safest Link Shortener on the Planet</title>
+
+	<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='32'%20height='32'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2300e5a0'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71'/%3E%3Cpath%20d='M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71'/%3E%3C/svg%3E" type="image/svg+xml">
+	<link rel="canonical" href="https://lk0.org/">
+
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org/",
+		"@type": "WebSite",
+		"name": "LinkZero",
+		"url": "https://lk0.org/"
+	}
+	</script>
+
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org/",
+		"@type": "Organization",
+		"name": "LinkZero",
+		"url": "https://lk0.org/",
+		"description": "The safest link shortener on the planet. No tracking, no accounts, no agenda."
+	}
+	</script>
+
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
+
+	<style>
+		*, *::before, *::after {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		:root {
+			--bg: #0d0f0e;
+			--surface: #141714;
+			--border: #222623;
+			--border-focus: #00e5a0;
+			--text: #e8ede9;
+			--text-muted: #6b7a6d;
+			--accent: #00e5a0;
+			--accent-dim: #00b37d;
+			--error: #ff6b6b;
+			--font-mono: monospace;
+			--font-sans: sans-serif;
+			--radius: 6px;
+			--max-width: 640px;
+		}
+
+		html {
+			font-size: 16px;
+			font-smoothing: antialiased;
+		}
+
+		body {
+			background: var( --bg );
+			color: var( --text );
+			font-family: var( --font-sans );
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		a {
+			color: var( --accent );
+			text-decoration: none;
+		}
+
+		a:hover, a:focus {
+			text-decoration: underline;
+		}
+
+		.skip-link {
+			position: absolute;
+			top: -100%;
+			left: 0;
+			background: var( --accent );
+			color: var( --bg );
+			padding: 8px 16px;
+			font-family: var( --font-mono );
+			font-size: 13px;
+			z-index: 100;
+		}
+
+		.skip-link:focus {
+			top: 0;
+		}
+
+		#header {
+			padding: 24px 24px 0;
+			max-width: var( --max-width );
+			margin: 0 auto;
+			width: 100%;
+		}
+
+		#logo {
+			font-family: var( --font-mono );
+			font-size: 20px;
+			font-weight: 600;
+			color: var( --text );
+			letter-spacing: -0.5px;
+		}
+
+		#logo span {
+			color: var( --accent );
+		}
+
+		#content {
+			flex: 1;
+			max-width: var( --max-width );
+			margin: 0 auto;
+			width: 100%;
+			padding: 48px 24px 64px;
+		}
+
+		.tagline {
+			font-family: var( --font-mono );
+			font-size: 12px;
+			color: var( --text-muted );
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			margin-bottom: 32px;
+		}
+
+		.form-wrap {
+			background: var( --surface );
+			border: 1px solid var( --border );
+			border-radius: var( --radius );
+			padding: 24px;
+		}
+
+		.input-row {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.btn-row {
+			display: flex;
+			gap: 8px;
+		}
+
+		#url-input {
+			flex: 1;
+			background: var( --bg );
+			border: 1px solid var( --border );
+			border-radius: var( --radius );
+			color: var( --text );
+			font-family: var( --font-mono );
+			font-size: 14px;
+			padding: 12px 14px;
+			outline: none;
+			transition: border-color 0.15s;
+			min-width: 0;
+		}
+
+		#url-input::placeholder {
+			color: var( --text-muted );
+		}
+
+		#url-input:focus {
+			border-color: var( --border-focus );
+		}
+
+		.action-btn {
+			flex: 1;
+			background: var( --accent );
+			border: none;
+			border-radius: var( --radius );
+			color: var( --bg );
+			cursor: pointer;
+			font-family: var( --font-mono );
+			font-size: 13px;
+			font-weight: 600;
+			padding: 12px 20px;
+			margin-top: 8px;
+			white-space: nowrap;
+			transition: background 0.15s, opacity 0.15s;
+			letter-spacing: 0.3px;
+		}
+
+		.action-btn:hover, .action-btn:focus {
+			background: var( --accent-dim );
+		}
+
+		.action-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		#status {
+			margin-top: 16px;
+			font-family: var( --font-mono );
+			font-size: 13px;
+			min-height: 20px;
+		}
+
+		#status.error {
+			color: var( --error );
+		}
+
+		.result-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			background: var( --bg );
+			border: 1px solid var( --border );
+			border-radius: var( --radius );
+			padding: 10px 14px;
+		}
+
+		.result-url {
+			flex: 1;
+			color: var( --accent );
+			font-size: 15px;
+			font-weight: 500;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.copy-btn {
+			background: none;
+			border: 1px solid var( --border );
+			border-radius: var( --radius );
+			color: var( --text-muted );
+			cursor: pointer;
+			font-family: var( --font-mono );
+			font-size: 11px;
+			padding: 5px 10px;
+			transition: border-color 0.15s, color 0.15s;
+			white-space: nowrap;
+			letter-spacing: 0.5px;
+		}
+
+		.copy-btn:hover, .copy-btn:focus {
+			border-color: var( --accent );
+			color: var( --accent );
+		}
+
+		.copy-btn.copied {
+			border-color: var( --accent );
+			color: var( --accent );
+		}
+
+		#footer {
+			max-width: var( --max-width );
+			margin: 0 auto;
+			width: 100%;
+			padding: 0 24px 48px;
+		}
+
+		.faq-header {
+			font-family: var( --font-mono );
+			font-size: 11px;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			color: var( --text-muted );
+			margin-bottom: 20px;
+			padding-top: 16px;
+			border-top: 1px solid var( --border );
+		}
+
+		details {
+			border-bottom: 1px solid var( --border );
+		}
+
+		summary {
+			cursor: pointer;
+			list-style: none;
+			padding: 16px 0;
+			font-family: var( --font-mono );
+			font-size: 13px;
+			font-weight: 500;
+			color: var( --text );
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+			user-select: none;
+		}
+
+		summary::-webkit-details-marker {
+			display: none;
+		}
+
+		summary::after {
+			content: '+';
+			color: var( --text-muted );
+			font-size: 18px;
+			font-weight: 400;
+			flex-shrink: 0;
+			transition: transform 0.15s;
+		}
+
+		details[open] summary::after {
+			transform: rotate( 45deg );
+		}
+
+		.faq-body {
+			padding-bottom: 16px;
+			font-size: 14px;
+			line-height: 1.7;
+			color: var( --text-muted );
+		}
+
+		.faq-body p + p {
+			margin-top: 10px;
+		}
+
+		.footer {
+			font-family: var( --font-mono );
+			font-size: 11px;
+			color: var( --text-muted );
+			margin-top: 32px;
+		}
+
+		@media ( max-width: 480px ) {
+			.btn-row {
+				flex-direction: column;
+			}
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<a href="#content" class="skip-link">Skip to content</a>
+
+	<header id="header">
+		<div id="logo">Link<span>Zero</span></div>
+	</header>
+
+	<main id="content">
+
+		<p class="tagline">No tracking &middot; No accounts &middot; No agenda</p>
+
+		<div class="form-wrap">
+			<div class="input-row">
+				<label for="url-input" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;">URL to shorten or unshorten</label>
+				<input
+					type="url"
+					id="url-input"
+					placeholder="https://example.com/some/long/url"
+					autocomplete="off"
+					spellcheck="false"
+				>
+			</div>
+			<div class="btn-row">
+				<button type="button" id="shorten-btn" class="action-btn">Shorten</button>
+				<button type="button" id="unshorten-btn" class="action-btn">Unshorten</button>
+			</div>
+			<div id="status" role="status" aria-live="polite"></div>
+		</div>
+
+	</main>
+
+	<footer id="footer">
+
+		<p class="faq-header">FAQ</p>
+
+		<details>
+			<summary>Are shortened links safe?</summary>
+			<div class="faq-body">
+				<p>No. You should avoid ever clicking on a shortened link from an unknown source, because you can't see where it actually goes. If you receive one, use a service like <a href="https://unshorten.me/" target="_blank" rel="noopener noreferrer">unshorten.me</a> to inspect it first.</p>
+				<p>That said, if using a link shortener is unavoidable, you can at least use one that isn't working against you. LinkZero is the safest link shortener on the planet: it collects no data about you or the people who click your links, it has no ad network, no resale business, and no incentive to do anything other than forward one URL to another.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>What data do you collect?</summary>
+			<div class="faq-body">
+				<p>None. We store the mapping between a short URL and its destination. That's it. No IP addresses, no click counts, no timestamps, no referrers, no cookies, no analytics. When you shorten a link, we don't know who you are. When someone clicks it, we don't know who they are either.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>Do links expire?</summary>
+			<div class="faq-body">
+				<p>No. Links are permanent. Since we track nothing, there's no activity data to expire them on, and no reason to delete them.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>Can I shorten any URL?</summary>
+			<div class="faq-body">
+				<p>Almost. We block URLs that use dangerous protocols like <code>javascript:</code> or <code>data:</code>, and we check submitted domains against a daily-updated threat intelligence blocklist of known malware, phishing, and scam domains. Legitimate URLs will pass without issue.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>Can I choose a custom short code?</summary>
+			<div class="faq-body">
+				<p>No. Codes are randomly generated. Custom aliases create moderation overhead we don't want, and random codes are more resistant to enumeration.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>If I shorten the same URL twice, do I get two links?</summary>
+			<div class="faq-body">
+				<p>No. Submitting a URL that has already been shortened will return the existing short link. There's no benefit to creating duplicates.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>Can I unshorten a link?</summary>
+			<div class="faq-body">
+				<p>Yes. Paste any shortened link and click Unshorten to reveal the final destination without your browser ever visiting it. The lookup is performed by our server, so your IP address is never exposed to the destination or any trackers embedded in the redirect chain.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>Can I report a malicious link?</summary>
+			<div class="faq-body">
+				<p>Yes. Open an issue on <a href="https://github.com/webguyio/linkzero" target="_blank" rel="noopener noreferrer">GitHub</a> with the short URL and why you believe it's malicious. We'll investigate and remove it if warranted.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>Who runs this?</summary>
+			<div class="faq-body">
+				<p>LinkZero is an open-source project. The code is public on <a href="https://github.com/webguyio/linkzero" target="_blank" rel="noopener noreferrer">GitHub</a>, so you can verify exactly what it does and doesn't do.</p>
+			</div>
+		</details>
+
+		<p class="footer"><a href="https://github.com/webguyio/linkzero" target="_blank">LinkZero (LK0.org)</a></p>
+
+	</footer>
+
+	<script>
+		const SITE_KEY = '0x4AAAAAADEyoMk060CmD-2t';
+		const input = document.getElementById( 'url-input' );
+		const btn = document.getElementById( 'shorten-btn' );
+		const status = document.getElementById( 'status' );
+		let widgetId = null;
+
+		function renderTurnstile() {
+			if ( typeof turnstile === 'undefined' ) return;
+			widgetId = turnstile.render( document.createElement( 'div' ), {
+				sitekey: SITE_KEY,
+				size: 'invisible',
+				callback: onTurnstileSuccess,
+				'error-callback': onTurnstileError,
+				'expired-callback': onTurnstileExpired
+			} );
+		}
+
+		function onTurnstileSuccess( token ) {
+			submitUrl( token );
+		}
+
+		function onTurnstileError() {
+			setError( 'Verification failed. Please try again.' );
+			btn.disabled = false;
+		}
+
+		function onTurnstileExpired() {
+			if ( widgetId !== null ) turnstile.reset( widgetId );
+		}
+
+		function setError( msg ) {
+			status.className = 'error';
+			status.textContent = msg;
+		}
+
+		function showResult( shortUrl ) {
+			status.className = '';
+			const row = document.createElement( 'div' );
+			row.className = 'result-row';
+			const link = document.createElement( 'a' );
+			link.className = 'result-url';
+			link.href = shortUrl;
+			link.target = '_blank';
+			link.rel = 'noopener noreferrer';
+			link.textContent = shortUrl;
+			const copy = document.createElement( 'button' );
+			copy.type = 'button';
+			copy.className = 'copy-btn';
+			copy.textContent = 'COPY';
+			copy.addEventListener( 'click', () => {
+				navigator.clipboard.writeText( shortUrl ).then( () => {
+					copy.textContent = 'COPIED';
+					copy.classList.add( 'copied' );
+					setTimeout( () => {
+						copy.textContent = 'COPY';
+						copy.classList.remove( 'copied' );
+					}, 2000 );
+				} );
+			} );
+			row.appendChild( link );
+			row.appendChild( copy );
+			status.appendChild( row );
+		}
+
+		async function submitUrl( token ) {
+			try {
+				const res = await fetch( '/api/zero', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify( { url: input.value.trim(), turnstileToken: token } )
+				} );
+				const data = await res.json();
+				btn.disabled = false;
+				if ( data.error ) {
+					setError( data.error );
+				} else {
+					showResult( 'https://lk0.org/' + data.slug );
+					input.value = '';
+				}
+			} catch( e ) {
+				setError( 'Something went wrong. Please try again.' );
+				btn.disabled = false;
+			}
+			if ( widgetId !== null ) turnstile.reset( widgetId );
+		}
+
+		const unshortenBtn = document.getElementById( 'unshorten-btn' );
+
+		unshortenBtn.addEventListener( 'click', async () => {
+			const url = input.value.trim();
+			if ( !url ) {
+				setError( 'Please enter a URL.' );
+				return;
+			}
+			status.className = '';
+			status.textContent = '';
+			unshortenBtn.disabled = true;
+			try {
+				const res = await fetch( '/api/zero?url=' + encodeURIComponent( url ) );
+				const data = await res.json();
+				if ( data.error ) {
+					setError( data.error );
+				} else {
+					showResult( data.url );
+				}
+			} catch( e ) {
+				setError( 'Something went wrong. Please try again.' );
+			}
+			unshortenBtn.disabled = false;
+		} );
+
+		btn.addEventListener( 'click', () => {
+			const url = input.value.trim();
+			if ( !url ) {
+				setError( 'Please enter a URL.' );
+				return;
+			}
+			status.className = '';
+			status.textContent = '';
+			btn.disabled = true;
+			if ( typeof turnstile !== 'undefined' && widgetId !== null ) {
+				turnstile.execute( widgetId );
+			} else {
+				setError( 'Verification unavailable. Please reload and try again.' );
+				btn.disabled = false;
+			}
+		} );
+
+		input.addEventListener( 'keydown', ( e ) => {
+			if ( e.key === 'Enter' ) btn.click();
+		} );
+
+		window.addEventListener( 'load', () => {
+			if ( typeof turnstile !== 'undefined' ) {
+				renderTurnstile();
+			} else {
+				document.querySelector( 'script[src*="turnstile"]' ).addEventListener( 'load', renderTurnstile );
+			}
+			if ( window.location.search.includes( '404=1' ) ) {
+				setError( 'That short link does not exist.' );
+			}
+		} );
+	</script>
+
+</body>
+
+</html>
