@@ -1,6 +1,6 @@
 const BLOCKED_PROTOCOLS = /^(javascript|data|vbscript|blob):/i;
 
-export async function onRequestGet( { request } ) {
+export async function onRequestGet( { request, env } ) {
 	const headers = {
 		'Content-Type': 'application/json',
 		'Access-Control-Allow-Origin': '*'
@@ -21,6 +21,15 @@ export async function onRequestGet( { request } ) {
 	try {
 		let current = target;
 		for ( let i = 0; i < 10; i++ ) {
+			const parsed = new URL( current );
+			if ( parsed.hostname === 'lk0.org' ) {
+				const slug = parsed.pathname.replace( '/', '' );
+				const resolved = await env.ZERO_LINKS.get( 'slug:' + slug );
+				if ( resolved ) {
+					current = resolved;
+				}
+				break;
+			}
 			const res = await fetch( current, { method: 'HEAD', redirect: 'manual' } );
 			const location = res.headers.get( 'location' );
 			if ( ( res.status < 300 || res.status >= 400 ) || !location ) break;
