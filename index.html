@@ -473,8 +473,10 @@
 			submitUrl( token );
 		}
 
-		function onTurnstileError() {
-			setError( 'Verification failed. Please try again.' );
+		function onTurnstileError( code ) {
+			if ( widgetId !== null ) turnstile.remove( widgetId );
+			widgetId = null;
+			setError( 'Verification failed (code: ' + code + '). Please try again.' );
 			btn.disabled = false;
 		}
 
