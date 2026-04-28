@@ -11,9 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download hagezi TIF blocklist
+      - name: Download blocklist
         run: |
-          curl -sf "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/tif.txt" \
+          curl -sf "https://raw.githubusercontent.com/phishdestroy/destroylist/main/rootlist/formats/primary_active/domains.txt" \
             | grep -v '^#' \
             | grep -v '^$' \
             | sed 's/^www\.//' \

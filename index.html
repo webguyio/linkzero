@@ -211,7 +211,7 @@
 			margin-top: 16px;
 			font-family: var( --font-mono );
 			font-size: 13px;
-			min-height: 20px;
+			display: none;
 		}
 
 		#status.error {
@@ -382,8 +382,8 @@
 		<details>
 			<summary>Are shortened links safe?</summary>
 			<div class="faq-body">
-				<p>No. You should avoid ever clicking on a shortened link from an unknown source, because you can't see where it actually goes. If you receive one, use a service like <a href="https://unshorten.me/" target="_blank" rel="noopener noreferrer">unshorten.me</a> to inspect it first.</p>
-				<p>That said, if using a link shortener is unavoidable, you can at least use one that isn't working against you. LinkZero is the safest link shortener on the planet: it collects no data about you or the people who click your links, it has no ad network, no resale business, and no incentive to do anything other than forward one URL to another.</p>
+				<p>No. You should avoid ever clicking on a shortened link from an unknown source, because you can't see where it actually goes. If you receive one, you should unshorten it to inspect it first.</p>
+				<p>That said, if using a link shortener is unavoidable, you can at least use one that isn't working against you. LinkZero is the safest link shortener and it collects no data about you or the people who click your links, it has no ad network, no resale business, and no incentive to do anything other than forward one URL to another.</p>
 			</div>
 		</details>
 
@@ -437,7 +437,7 @@
 		</details>
 
 		<details>
-			<summary>Who runs this?</summary>
+			<summary>Can I trust you?</summary>
 			<div class="faq-body">
 				<p>LinkZero is an open-source project. The code is public on <a href="https://github.com/webguyio/linkzero" target="_blank" rel="noopener noreferrer">GitHub</a>, so you can verify exactly what it does and doesn't do.</p>
 			</div>
@@ -458,6 +458,8 @@
 		function renderTurnstile() {
 			if ( typeof turnstile === 'undefined' ) return;
 			widgetContainer = document.createElement( 'div' );
+			widgetContainer.style.display = 'none';
+			document.body.appendChild( widgetContainer );
 			widgetId = turnstile.render( widgetContainer, {
 				sitekey: SITE_KEY,
 				size: 'invisible',
@@ -483,10 +485,12 @@
 		function setError( msg ) {
 			status.className = 'error';
 			status.textContent = msg;
+			status.style.display = 'block';
 		}
 
 		function showResult( shortUrl ) {
 			status.className = '';
+			status.style.display = 'block';
 			const row = document.createElement( 'div' );
 			row.className = 'result-row';
 			const link = document.createElement( 'a' );
@@ -546,6 +550,7 @@
 			}
 			status.className = '';
 			status.textContent = '';
+			status.style.display = 'none';
 			unshortenBtn.disabled = true;
 			try {
 				const res = await fetch( '/api/zero?url=' + encodeURIComponent( url ) );
@@ -569,6 +574,7 @@
 			}
 			status.className = '';
 			status.textContent = '';
+			status.style.display = 'none';
 			btn.disabled = true;
 			if ( typeof turnstile !== 'undefined' && widgetId !== null ) {
 				turnstile.execute( widgetContainer );

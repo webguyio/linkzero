@@ -92,6 +92,9 @@ export async function onRequestPost( { request, env } ) {
 		if ( !/^https?:\/\//i.test( normalized ) ) {
 			return new Response( JSON.stringify( { error: 'Only http and https URLs are allowed.' } ), { status: 400, headers } );
 		}
+		if ( /^https?:\/\/(\d{1,3}\.){3}\d{1,3}/i.test( normalized ) || /^https?:\/\/\[/i.test( normalized ) ) {
+			return new Response( JSON.stringify( { error: 'IP address URLs are not allowed.' } ), { status: 400, headers } );
+		}
 		const ip = request.headers.get( 'CF-Connecting-IP' ) || '';
 		const valid = await verifyTurnstile( turnstileToken, ip, env.TURNSTILE_SECRET );
 		if ( !valid ) {
@@ -99,10 +102,20 @@ export async function onRequestPost( { request, env } ) {
 		}
 		const hostname = extractHostname( normalized );
 		if ( hostname ) {
-			const res = await fetch( 'https://lk0.org/blocklist.txt' );
-			if ( res.ok ) {
-				const domains = ( await res.text() ).split( '\n' );
-				if ( domains.includes( hostname ) || domains.includes( 'www.' + hostname ) ) {
+			const cacheKey = new Request( 'https://lk0.org/blocklist.txt' );
+			const cache = caches.default;
+			let blocklistRes = await cache.match( cacheKey );
+			if ( !blocklistRes ) {
+				blocklistRes = await fetch( cacheKey );
+				if ( blocklistRes.ok ) {
+					const cached = new Response( blocklistRes.body, blocklistRes );
+					cached.headers.set( 'Cache-Control', 'public, max-age=86400' );
+					await cache.put( cacheKey, cached );
+				}
+			}
+			if ( blocklistRes && blocklistRes.ok ) {
+				const domains = new Set( ( await blocklistRes.text() ).split( '\n' ) );
+				if ( domains.has( hostname ) || domains.has( 'www.' + hostname ) ) {
 					return new Response( JSON.stringify( { error: 'This domain is on a known threat blocklist.' } ), { status: 400, headers } );
 				}
 			}
