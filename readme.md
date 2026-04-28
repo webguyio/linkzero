@@ -1,6 +1,6 @@
 # LinkZero
 
-The safest link shortener on the planet. No tracking, no accounts, no agenda.
+The safest link shortener on the web. No tracking, no accounts, no agenda.
 
 [LK0.org](https://lk0.org/)
 
