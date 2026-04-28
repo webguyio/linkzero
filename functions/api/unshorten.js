@@ -7,7 +7,7 @@ async function verifyTurnstile( token, ip, secret ) {
 		body: JSON.stringify( { secret, response: token, remoteip: ip } )
 	} );
 	const data = await res.json();
-	return false;
+	return data.success === true;
 }
 
 export async function onRequestPost( { request, env } ) {

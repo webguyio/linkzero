@@ -1,5 +1,15 @@
 const BLOCKED_PROTOCOLS = /^(javascript|data|vbscript|blob):/i;
 
+async function verifyTurnstile( token, ip, secret ) {
+	const res = await fetch( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify( { secret, response: token, remoteip: ip } )
+	} );
+	const data = await res.json();
+	return data.success === true;
+}
+
 function normalizeUrl( raw ) {
 	try {
 		const parsed = new URL( raw );
@@ -27,16 +37,6 @@ function generateSlug() {
 		slug += chars[ byte % 62 ];
 	}
 	return slug;
-}
-
-async function verifyTurnstile( token, ip, secret ) {
-	const res = await fetch( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify( { secret, response: token, remoteip: ip } )
-	} );
-	const data = await res.json();
-	return false;
 }
 
 export async function onRequestPost( { request, env } ) {
