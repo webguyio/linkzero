@@ -454,6 +454,7 @@
 		const status = document.getElementById( 'status' );
 		let widgetId = null;
 		let widgetContainer = null;
+		let pendingAction = null;
 
 		function renderTurnstile() {
 			if ( typeof turnstile === 'undefined' ) return;
@@ -471,7 +472,12 @@
 		}
 
 		function onTurnstileSuccess( token ) {
-			submitUrl( token );
+			if ( pendingAction === 'unshorten' ) {
+				submitUnshorten( token );
+			} else {
+				submitUrl( token );
+			}
+			pendingAction = null;
 		}
 
 		function onTurnstileError() {
@@ -521,7 +527,7 @@
 
 		async function submitUrl( token ) {
 			try {
-				const res = await fetch( '/api/zero', {
+				const res = await fetch( '/api/shorten', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify( { url: input.value.trim(), turnstileToken: token } )
@@ -543,18 +549,13 @@
 
 		const unshortenBtn = document.getElementById( 'unshorten-btn' );
 
-		unshortenBtn.addEventListener( 'click', async () => {
-			const url = input.value.trim();
-			if ( !url ) {
-				setError( 'Please enter a URL.' );
-				return;
-			}
-			status.className = '';
-			status.textContent = '';
-			status.style.display = 'none';
-			unshortenBtn.disabled = true;
+		async function submitUnshorten( token ) {
 			try {
-				const res = await fetch( '/api/zero?url=' + encodeURIComponent( url ) );
+				const res = await fetch( '/api/unshorten', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify( { url: input.value.trim(), turnstileToken: token } )
+				} );
 				const data = await res.json();
 				if ( data.error ) {
 					setError( data.error );
@@ -565,6 +566,26 @@
 				setError( 'Something went wrong. Please try again.' );
 			}
 			unshortenBtn.disabled = false;
+			if ( widgetId !== null ) turnstile.reset( widgetId );
+		}
+
+		unshortenBtn.addEventListener( 'click', () => {
+			const url = input.value.trim();
+			if ( !url ) {
+				setError( 'Please enter a URL.' );
+				return;
+			}
+			status.className = '';
+			status.textContent = '';
+			status.style.display = 'none';
+			unshortenBtn.disabled = true;
+			if ( typeof turnstile !== 'undefined' && widgetId !== null ) {
+				pendingAction = 'unshorten';
+				turnstile.execute( widgetContainer );
+			} else {
+				setError( 'Verification unavailable. Please reload and try again.' );
+				unshortenBtn.disabled = false;
+			}
 		} );
 
 		btn.addEventListener( 'click', () => {
