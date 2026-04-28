@@ -463,6 +463,7 @@
 			widgetId = turnstile.render( widgetContainer, {
 				sitekey: SITE_KEY,
 				size: 'invisible',
+				execution: 'execute',
 				callback: onTurnstileSuccess,
 				'error-callback': onTurnstileError,
 				'expired-callback': onTurnstileExpired
@@ -473,10 +474,8 @@
 			submitUrl( token );
 		}
 
-		function onTurnstileError( code ) {
-			if ( widgetId !== null ) turnstile.remove( widgetId );
-			widgetId = null;
-			setError( 'Verification failed (code: ' + code + '). Please try again.' );
+		function onTurnstileError() {
+			setError( 'Verification failed. Please try again.' );
 			btn.disabled = false;
 		}
 
@@ -488,7 +487,6 @@
 			status.className = 'error';
 			status.textContent = msg;
 			status.style.display = 'block';
-			console.trace( msg );
 		}
 
 		function showResult( shortUrl ) {
