@@ -453,10 +453,12 @@
 		const btn = document.getElementById( 'shorten-btn' );
 		const status = document.getElementById( 'status' );
 		let widgetId = null;
+		let widgetContainer = null;
 
 		function renderTurnstile() {
 			if ( typeof turnstile === 'undefined' ) return;
-			widgetId = turnstile.render( document.createElement( 'div' ), {
+			widgetContainer = document.createElement( 'div' );
+			widgetId = turnstile.render( widgetContainer, {
 				sitekey: SITE_KEY,
 				size: 'invisible',
 				callback: onTurnstileSuccess,
@@ -569,7 +571,7 @@
 			status.textContent = '';
 			btn.disabled = true;
 			if ( typeof turnstile !== 'undefined' && widgetId !== null ) {
-				turnstile.execute( widgetId );
+				turnstile.execute( widgetContainer );
 			} else {
 				setError( 'Verification unavailable. Please reload and try again.' );
 				btn.disabled = false;
