@@ -68,7 +68,6 @@
 
 		html {
 			font-size: 16px;
-			font-smoothing: antialiased;
 		}
 
 		body {
@@ -106,10 +105,10 @@
 		}
 
 		#header {
-			padding: 24px 24px 0;
-			max-width: var( --max-width );
-			margin: 0 auto;
 			width: 100%;
+			max-width: var( --max-width );
+			padding: 5% 24px 0;
+			margin: 0 auto;
 		}
 
 		#logo {
@@ -118,6 +117,10 @@
 			font-weight: 600;
 			color: var( --text );
 			letter-spacing: -0.5px;
+		}
+
+		#logo a {
+			color: #fff;
 		}
 
 		#logo span {
@@ -271,12 +274,12 @@
 
 		.faq-header {
 			font-family: var( --font-mono );
-			font-size: 11px;
+			font-size: 16px;
 			text-transform: uppercase;
 			letter-spacing: 2px;
 			color: var( --text-muted );
-			margin-bottom: 20px;
-			padding-top: 16px;
+			margin: 20px 0;
+			padding-top: 20px;
 			border-top: 1px solid var( --border );
 		}
 
@@ -289,7 +292,7 @@
 			list-style: none;
 			padding: 16px 0;
 			font-family: var( --font-mono );
-			font-size: 13px;
+			font-size: 14px;
 			font-weight: 500;
 			color: var( --text );
 			display: flex;
@@ -318,7 +321,7 @@
 
 		.faq-body {
 			padding-bottom: 16px;
-			font-size: 14px;
+			font-size: 15px;
 			line-height: 1.7;
 			color: var( --text-muted );
 		}
@@ -329,9 +332,10 @@
 
 		.footer {
 			font-family: var( --font-mono );
-			font-size: 11px;
+			font-size: 12px;
 			color: var( --text-muted );
-			margin-top: 32px;
+			text-align: center;
+			padding: 15% 10% 10%;
 		}
 
 		@media ( max-width: 480px ) {
@@ -348,7 +352,7 @@
 	<a href="#content" class="skip-link">Skip to content</a>
 
 	<header id="header">
-		<div id="logo">Link<span>Zero</span></div>
+		<h1 id="logo"><a href="./" title="LinkZero">Link<span>Zero</span></a></h1>
 	</header>
 
 	<main id="content">
@@ -357,14 +361,8 @@
 
 		<div class="form-wrap">
 			<div class="input-row">
-				<label for="url-input" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;">URL to shorten or unshorten</label>
-				<input
-					type="url"
-					id="url-input"
-					placeholder="https://example.com/some/long/url"
-					autocomplete="off"
-					spellcheck="false"
-				>
+				<label for="url-input" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">URL to shorten or unshorten</label>
+				<input type="url" id="url-input" placeholder="https://example.com/some/long/url" autocomplete="off" spellcheck="false">
 			</div>
 			<div class="btn-row">
 				<button type="button" id="shorten-btn" class="action-btn">Shorten</button>
@@ -377,48 +375,20 @@
 
 	<footer id="footer">
 
-		<p class="faq-header">FAQ</p>
+		<h2 class="faq-header">FAQ</h2>
 
 		<details>
 			<summary>Are shortened links safe?</summary>
 			<div class="faq-body">
-				<p>No. You should avoid ever clicking on a shortened link from an unknown source, because you can't see where it actually goes. If you receive one, you should unshorten it to inspect it first.</p>
-				<p>That said, if using a link shortener is unavoidable, you can at least use one that isn't working against you. LinkZero is the safest link shortener and it collects no data about you or the people who click your links, it has no ad network, no resale business, and no incentive to do anything other than forward one URL to another.</p>
-			</div>
-		</details>
-
-		<details>
-			<summary>What data do you collect?</summary>
-			<div class="faq-body">
-				<p>None. We store the mapping between a short URL and its destination. That's it. No IP addresses, no click counts, no timestamps, no referrers, no cookies, no analytics. When you shorten a link, we don't know who you are. When someone clicks it, we don't know who they are either.</p>
-			</div>
-		</details>
-
-		<details>
-			<summary>Do links expire?</summary>
-			<div class="faq-body">
-				<p>No. Links are permanent. Since we track nothing, there's no activity data to expire them on, and no reason to delete them.</p>
+				<p>No. You should avoid ever clicking on a shortened link (especially from an unknown source) because you can't see where it actually goes. If you receive one, you should unshorten it to inspect it first.</p>
+				<p>That said, if using a link shortener is unavoidable, you can at least use one that isn't working against you. LinkZero is the safest option and it collects no data about you or the people who click your links, it has no ad network, no resale business, and no incentive to do anything other than forward one URL to another.</p>
 			</div>
 		</details>
 
 		<details>
 			<summary>Can I shorten any URL?</summary>
 			<div class="faq-body">
-				<p>Almost. We block URLs that use dangerous protocols like <code>javascript:</code> or <code>data:</code>, and we check submitted domains against a daily-updated threat intelligence blocklist of known malware, phishing, and scam domains. Legitimate URLs will pass without issue.</p>
-			</div>
-		</details>
-
-		<details>
-			<summary>Can I choose a custom short code?</summary>
-			<div class="faq-body">
-				<p>No. Codes are randomly generated. Custom aliases create moderation overhead we don't want, and random codes are more resistant to enumeration.</p>
-			</div>
-		</details>
-
-		<details>
-			<summary>If I shorten the same URL twice, do I get two links?</summary>
-			<div class="faq-body">
-				<p>No. Submitting a URL that has already been shortened will return the existing short link. There's no benefit to creating duplicates.</p>
+				<p>Almost. URLs that use dangerous patterns or known malware, phishing, and scam domains are blocked. Legitimate URLs should pass without issue.</p>
 			</div>
 		</details>
 
@@ -430,20 +400,49 @@
 		</details>
 
 		<details>
-			<summary>Can I report a malicious link?</summary>
+			<summary>Do links expire?</summary>
 			<div class="faq-body">
-				<p>Yes. Open an issue on <a href="https://github.com/webguyio/linkzero" target="_blank" rel="noopener noreferrer">GitHub</a> with the short URL and why you believe it's malicious. We'll investigate and remove it if warranted.</p>
+				<p>No. Links are permanent. Since nothing is tracked, there's no activity data to expire them on, and no reason to delete them.</p>
 			</div>
 		</details>
 
 		<details>
-			<summary>Can I trust you?</summary>
+			<summary>Can I choose a custom short code?</summary>
 			<div class="faq-body">
-				<p>LinkZero is an open-source project. The code is public on <a href="https://github.com/webguyio/linkzero" target="_blank" rel="noopener noreferrer">GitHub</a>, so you can verify exactly what it does and doesn't do.</p>
+				<p>No. Codes are randomly generated. Custom aliases create moderation burden, and random codes are more resistant to enumeration.</p>
 			</div>
 		</details>
 
-		<p class="footer"><a href="https://github.com/webguyio/linkzero" target="_blank">LinkZero (LK0.org)</a></p>
+		<details>
+			<summary>If I shorten the same URL twice, do I get two links?</summary>
+			<div class="faq-body">
+				<p>No. Submitting a URL that has already been shortened will return the existing short link. There's no benefit to creating duplicates.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>What data do you collect?</summary>
+			<div class="faq-body">
+				<p>None. Only the mapping between a short URL and its destination are stored. That's it. No IP addresses, no click counts, no timestamps, no referrers, no cookies, no analytics. When you shorten a link, we don't know who you are. When someone clicks it, we don't know who they are either.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>Can I report a malicious link?</summary>
+			<div class="faq-body">
+				<p>Yes. <a href="mailto:abuse@lk0.org">Email us</a> with the short URL and why you believe it's malicious. If warranted, it'll be removed.</p>
+			</div>
+		</details>
+
+		<details>
+			<summary>Why should I trust you?</summary>
+			<div class="faq-body">
+				<p>You shouldn't. You shouldn't trust anything or anyone blindly. The code is public on <a href="https://github.com/webguyio/linkzero" target="_blank" rel="noopener noreferrer">GitHub</a>, so you can verify exactly what it does and doesn't do, but that still means you have to trust the server. You can always self-host if you'd rather remove trust from the equation altogether.</p>
+				<p>With that out of the way, I can tell you the reason I created this tool is the same reason I often build my own solution, because nothing elegant nor privacy-friendly enough existed yet. I build tools I need to use myself.</p>
+			</div>
+		</details>
+
+		<p class="footer"><a href="https://github.com/webguyio/linkzero" target="_blank">LinkZero (LK0.org)</a> &middot; <a href="mailto:abuse@lk0.org">Report a Link</a></p>
 
 	</footer>
 
@@ -451,6 +450,7 @@
 		const SITE_KEY = '0x4AAAAAADEyoMk060CmD-2t';
 		const input = document.getElementById( 'url-input' );
 		const btn = document.getElementById( 'shorten-btn' );
+		const unshortenBtn = document.getElementById( 'unshorten-btn' );
 		const status = document.getElementById( 'status' );
 		let widgetId = null;
 		let widgetContainer = null;
@@ -483,6 +483,7 @@
 		function onTurnstileError() {
 			setError( 'Verification failed. Please try again.' );
 			btn.disabled = false;
+			unshortenBtn.disabled = false;
 		}
 
 		function onTurnstileExpired() {
@@ -546,8 +547,6 @@
 			}
 			if ( widgetId !== null ) turnstile.reset( widgetId );
 		}
-
-		const unshortenBtn = document.getElementById( 'unshorten-btn' );
 
 		async function submitUnshorten( token ) {
 			try {
