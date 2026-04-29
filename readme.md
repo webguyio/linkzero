@@ -15,7 +15,7 @@ The safest link shortener on the web. No tracking, no accounts, no agenda.
 
 ## Report a malicious link
 
-[Open an issue](https://github.com/webguyio/linkzero/issues) with the short URL and reason.
+[Email us](mailto:abuse@lk0.org) with the short URL and reason.
 
 ## License
 
