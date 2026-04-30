@@ -70,7 +70,8 @@ export async function onRequestPost( { request, env } ) {
 		}
 		const hostname = extractHostname( normalized );
 		if ( hostname ) {
-			const cacheKey = new Request( 'https://lk0.org/blocklist.txt' );
+			const blocklistUrl = 'https://lk0.org/blocklist.txt';
+			const cacheKey = new Request( blocklistUrl );
 			const cache = caches.default;
 			let blocklistRes = await cache.match( cacheKey );
 			const fetchHeaders = {};
@@ -78,7 +79,7 @@ export async function onRequestPost( { request, env } ) {
 				const etag = blocklistRes.headers.get( 'ETag' );
 				if ( etag ) fetchHeaders['If-None-Match'] = etag;
 			}
-			const freshRes = await fetch( cacheKey, { headers: fetchHeaders } );
+			const freshRes = await fetch( blocklistUrl, { headers: fetchHeaders } );
 			if ( freshRes.status === 200 ) {
 				const cached = new Response( freshRes.body, freshRes );
 				cached.headers.set( 'Cache-Control', 'public, max-age=31536000' );
