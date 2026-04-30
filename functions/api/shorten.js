@@ -69,6 +69,9 @@ export async function onRequestPost( { request, env } ) {
 			return new Response( JSON.stringify( { error: 'Verification failed.' } ), { status: 403, headers } );
 		}
 		const hostname = extractHostname( normalized );
+		if ( hostname === 'bit.ly' ) {
+			return new Response( JSON.stringify( { error: 'DEBUG: hostname check working' } ), { status: 400, headers } );
+		}
 		if ( hostname ) {
 			const blocklistUrl = 'https://lk0.org/blocklist.txt';
 			const cacheKey = new Request( blocklistUrl );
