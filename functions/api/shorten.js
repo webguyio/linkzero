@@ -70,7 +70,7 @@ export async function onRequestPost( { request, env } ) {
 		}
 		const hostname = extractHostname( normalized );
 		if ( hostname ) {
-			const blocklistUrl = 'https://lk0.org/blocklist.txt';
+			const blocklistUrl = 'https://raw.githubusercontent.com/0projects/linkzero/main/blocklist.txt';
 			const cacheKey = new Request( blocklistUrl );
 			const cache = caches.default;
 			let blocklistRes = await cache.match( cacheKey );
