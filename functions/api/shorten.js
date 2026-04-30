@@ -73,6 +73,7 @@ export async function onRequestPost( { request, env } ) {
 			const cache = caches.default;
 			const lists = [
 				'https://raw.githubusercontent.com/0projects/linkzero/main/blocklist.txt',
+				'https://raw.githubusercontent.com/PeterDaveHello/url-shorteners/master/list',
 				'https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/tif.txt'
 			];
 			for ( const listUrl of lists ) {

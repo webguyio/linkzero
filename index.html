@@ -338,6 +338,15 @@
 			padding: 15% 10% 10%;
 		}
 
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect( 0, 0, 0, 0 );
+			white-space: nowrap;
+		}
+
 		@media ( max-width: 480px ) {
 			.btn-row {
 				flex-direction: column;
@@ -361,7 +370,7 @@
 
 		<div class="form-wrap">
 			<div class="input-row">
-				<label for="url-input" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">URL to shorten or unshorten</label>
+				<label for="url-input" class="sr-only">URL to shorten or unshorten</label>
 				<input type="url" id="url-input" placeholder="https://example.com/some/long/url" autocomplete="off" spellcheck="false">
 			</div>
 			<div class="btn-row">
@@ -381,7 +390,7 @@
 			<summary>Are shortened links safe?</summary>
 			<div class="faq-body">
 				<p>No. You should avoid ever clicking on a shortened link (especially from an unknown source) because you can't see where it actually goes. If you receive one, you should unshorten it to inspect it first.</p>
-				<p>That said, if using a link shortener is unavoidable, you can at least use one that isn't working against you. LinkZero is the safest option and it collects no data about you or the people who click your links, it has no ad network, no resale business, and no incentive to do anything other than forward one URL to another.</p>
+				<p>That said, if using a link shortener is unavoidable, you can at least use one that isn't working against you. LinkZero is the safest option available and it collects no data about you or the people who click your links, it has no ad network, no resale business, and no incentive to do anything other than forward one URL to another.</p>
 			</div>
 		</details>
 

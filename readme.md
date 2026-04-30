@@ -6,11 +6,10 @@ The safest link shortener on the web. No tracking, no accounts, no agenda.
 
 ## How it works
 
-- Paste a URL, get a short link instantly
+- Paste a URL to shorten/unshorten it
 - No account required
 - Zero data collected about you or your link's visitors
-- Known malicious domains are blocked via a daily-updated threat intelligence list
-- Dangerous URL protocols (`javascript:`, `data:`, etc.) are rejected
+- Known malicious domains are blocked
 - Duplicate URLs return the same short link
 
 ## Report a malicious link
