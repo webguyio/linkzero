@@ -81,10 +81,9 @@ export async function onRequestPost( { request, env } ) {
 			}
 			const freshRes = await fetch( blocklistUrl, { headers: fetchHeaders } );
 			if ( freshRes.status === 200 ) {
-				const cached = new Response( freshRes.body, freshRes );
-				cached.headers.set( 'Cache-Control', 'public, max-age=31536000' );
-				blocklistRes = cached.clone();
-				await cache.put( cacheKey, cached );
+				const text = await freshRes.text();
+				blocklistRes = new Response( text, { headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=31536000', 'ETag': freshRes.headers.get( 'ETag' ) || '' } } );
+				await cache.put( cacheKey, blocklistRes.clone() );
 			} else if ( freshRes.status !== 304 ) {
 				blocklistRes = null;
 			}
