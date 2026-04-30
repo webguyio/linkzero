@@ -83,13 +83,13 @@ export async function onRequestPost( { request, env } ) {
 			if ( freshRes.status === 200 ) {
 				const cached = new Response( freshRes.body, freshRes );
 				cached.headers.set( 'Cache-Control', 'public, max-age=31536000' );
+				blocklistRes = cached.clone();
 				await cache.put( cacheKey, cached );
-				blocklistRes = cached;
 			} else if ( freshRes.status !== 304 ) {
 				blocklistRes = null;
 			}
 			if ( blocklistRes && blocklistRes.ok ) {
-				const domains = new Set( ( await blocklistRes.clone().text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
+				const domains = new Set( ( await blocklistRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
 				if ( domains.has( hostname ) || domains.has( 'www.' + hostname ) ) {
 					return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
 				}
