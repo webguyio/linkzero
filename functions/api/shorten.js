@@ -95,7 +95,7 @@ export async function onRequestPost( { request, env } ) {
 			}
 			const domains = new Set( ( await blocklistRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
 			if ( !domains.has( hostname ) && !domains.has( 'www.' + hostname ) ) {
-				return new Response( JSON.stringify( { error: 'DEBUG: hostname ' + hostname + ' not found in ' + domains.size + ' domains' } ), { status: 400, headers } );
+				return new Response( JSON.stringify( { error: 'DEBUG: hostname ' + hostname + ' not found in ' + domains.size + ' domains, freshRes.status=' + freshRes.status } ), { status: 400, headers } );
 			}
 			return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
 		}
