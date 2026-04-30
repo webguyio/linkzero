@@ -89,7 +89,7 @@ export async function onRequestPost( { request, env } ) {
 				blocklistRes = null;
 			}
 			if ( blocklistRes && blocklistRes.ok ) {
-				const domains = new Set( ( await blocklistRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
+				const domains = new Set( ( await blocklistRes.clone().text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
 				if ( domains.has( hostname ) || domains.has( 'www.' + hostname ) ) {
 					return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
 				}
@@ -115,7 +115,7 @@ export async function onRequestPost( { request, env } ) {
 		await env.ZERO_LINKS.put( 'url:' + normalized, slug );
 		return new Response( JSON.stringify( { slug } ), { headers } );
 	} catch( e ) {
-		return new Response( JSON.stringify( { error: e.message || 'Invalid request.' } ), { status: 400, headers } );
+		return new Response( JSON.stringify( { error: 'Invalid request.' } ), { status: 400, headers } );
 	}
 }
 
