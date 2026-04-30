@@ -1,3 +1,33 @@
+# dangerous
+ngrok.app
+ngrok.io
+trycloudflare.com
+
+# shorteners
+bit.ly
+bl.ink
+buff.ly
+cli.re
+clck.ru
+cutt.ly
+dlvr.it
+fur.ly
+goo.gl
+is.gd
+lk0.org
+mcaf.ee
+ow.ly
+qps.ru
+rb.gy
+rebrand.ly
+short.io
+t.co
+t2m.io
+tiny.cc
+tinyurl.com
+v.gd
+
+# phishing
 0-105.com
 0-autht-lo-xfin-ity-w0965.vercel.app
 0-cz.com

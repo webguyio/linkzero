@@ -82,7 +82,7 @@ export async function onRequestPost( { request, env } ) {
 				}
 			}
 			if ( blocklistRes && blocklistRes.ok ) {
-				const domains = new Set( ( await blocklistRes.text() ).split( '\n' ) );
+				const domains = new Set( ( await blocklistRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
 				if ( domains.has( hostname ) || domains.has( 'www.' + hostname ) ) {
 					return new Response( JSON.stringify( { error: 'This domain is on a known threat blocklist.' } ), { status: 400, headers } );
 				}
