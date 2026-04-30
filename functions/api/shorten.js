@@ -115,7 +115,7 @@ export async function onRequestPost( { request, env } ) {
 		await env.ZERO_LINKS.put( 'url:' + normalized, slug );
 		return new Response( JSON.stringify( { slug } ), { headers } );
 	} catch( e ) {
-		return new Response( JSON.stringify( { error: e.message || 'Invalid request.' } ), { status: 400, headers } );
+		return new Response( JSON.stringify( { error: 'Invalid request.' } ), { status: 400, headers } );
 	}
 }
 

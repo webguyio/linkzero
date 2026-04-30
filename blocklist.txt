@@ -1,6 +1,7 @@
 # dangerous
 ngrok.app
 ngrok.io
+serveo.net
 trycloudflare.com
 
 # shorteners
