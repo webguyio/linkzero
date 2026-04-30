@@ -70,34 +70,34 @@ export async function onRequestPost( { request, env } ) {
 		}
 		const hostname = extractHostname( normalized );
 		if ( hostname ) {
-			const blocklistUrl = 'https://raw.githubusercontent.com/0projects/linkzero/main/blocklist.txt';
-			const cacheKey = new Request( blocklistUrl );
 			const cache = caches.default;
-			let blocklistRes = await cache.match( cacheKey );
-			const fetchHeaders = {};
-			if ( blocklistRes ) {
-				const etag = blocklistRes.headers.get( 'ETag' );
-				if ( etag ) fetchHeaders['If-None-Match'] = etag;
+			const lists = [
+				'https://raw.githubusercontent.com/0projects/linkzero/main/blocklist.txt',
+				'https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/tif.txt'
+			];
+			for ( const listUrl of lists ) {
+				const cacheKey = new Request( listUrl );
+				let listRes = await cache.match( cacheKey );
+				const fetchHeaders = {};
+				if ( listRes ) {
+					const etag = listRes.headers.get( 'ETag' );
+					if ( etag ) fetchHeaders['If-None-Match'] = etag;
+				}
+				const freshRes = await fetch( listUrl, { headers: fetchHeaders } );
+				if ( freshRes.status === 200 ) {
+					const text = await freshRes.text();
+					listRes = new Response( text, { headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=31536000', 'ETag': freshRes.headers.get( 'ETag' ) || '' } } );
+					await cache.put( cacheKey, listRes.clone() );
+				} else if ( freshRes.status !== 304 ) {
+					listRes = null;
+				}
+				if ( listRes && listRes.ok ) {
+					const domains = new Set( ( await listRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
+					if ( domains.has( hostname ) || domains.has( 'www.' + hostname ) ) {
+						return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
+					}
+				}
 			}
-			const freshRes = await fetch( blocklistUrl, { headers: fetchHeaders } );
-			if ( freshRes.status === 200 ) {
-				const text = await freshRes.text();
-				blocklistRes = new Response( text, { headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=31536000', 'ETag': freshRes.headers.get( 'ETag' ) || '' } } );
-				await cache.put( cacheKey, blocklistRes.clone() );
-			} else if ( freshRes.status !== 304 ) {
-				blocklistRes = null;
-			}
-			if ( !blocklistRes ) {
-				return new Response( JSON.stringify( { error: 'DEBUG: blocklistRes is null, freshRes.status=' + freshRes.status } ), { status: 400, headers } );
-			}
-			if ( !blocklistRes.ok ) {
-				return new Response( JSON.stringify( { error: 'DEBUG: blocklistRes.ok is false, status=' + blocklistRes.status } ), { status: 400, headers } );
-			}
-			const domains = new Set( ( await blocklistRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
-			if ( !domains.has( hostname ) && !domains.has( 'www.' + hostname ) ) {
-				return new Response( JSON.stringify( { error: 'DEBUG: hostname ' + hostname + ' not found in ' + domains.size + ' domains, freshRes.status=' + freshRes.status } ), { status: 400, headers } );
-			}
-			return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
 		}
 		const existing = await env.ZERO_LINKS.get( 'url:' + normalized );
 		if ( existing ) {
