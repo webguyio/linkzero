@@ -73,18 +73,24 @@ export async function onRequestPost( { request, env } ) {
 			const cacheKey = new Request( 'https://lk0.org/blocklist.txt' );
 			const cache = caches.default;
 			let blocklistRes = await cache.match( cacheKey );
-			if ( !blocklistRes ) {
-				blocklistRes = await fetch( cacheKey );
-				if ( blocklistRes.ok ) {
-					const cached = new Response( blocklistRes.body, blocklistRes );
-					cached.headers.set( 'Cache-Control', 'public, max-age=86400' );
-					await cache.put( cacheKey, cached );
-				}
+			const fetchHeaders = {};
+			if ( blocklistRes ) {
+				const etag = blocklistRes.headers.get( 'ETag' );
+				if ( etag ) fetchHeaders['If-None-Match'] = etag;
+			}
+			const freshRes = await fetch( cacheKey, { headers: fetchHeaders } );
+			if ( freshRes.status === 200 ) {
+				const cached = new Response( freshRes.body, freshRes );
+				cached.headers.set( 'Cache-Control', 'public, max-age=31536000' );
+				await cache.put( cacheKey, cached );
+				blocklistRes = cached;
+			} else if ( freshRes.status !== 304 ) {
+				blocklistRes = null;
 			}
 			if ( blocklistRes && blocklistRes.ok ) {
 				const domains = new Set( ( await blocklistRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
 				if ( domains.has( hostname ) || domains.has( 'www.' + hostname ) ) {
-					return new Response( JSON.stringify( { error: 'This domain is on a known threat blocklist.' } ), { status: 400, headers } );
+					return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
 				}
 			}
 		}
