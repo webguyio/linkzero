@@ -69,9 +69,6 @@ export async function onRequestPost( { request, env } ) {
 			return new Response( JSON.stringify( { error: 'Verification failed.' } ), { status: 403, headers } );
 		}
 		const hostname = extractHostname( normalized );
-		if ( hostname === 'bit.ly' ) {
-			return new Response( JSON.stringify( { error: 'DEBUG: hostname check working' } ), { status: 400, headers } );
-		}
 		if ( hostname ) {
 			const blocklistUrl = 'https://lk0.org/blocklist.txt';
 			const cacheKey = new Request( blocklistUrl );
@@ -91,12 +88,17 @@ export async function onRequestPost( { request, env } ) {
 			} else if ( freshRes.status !== 304 ) {
 				blocklistRes = null;
 			}
-			if ( blocklistRes && blocklistRes.ok ) {
-				const domains = new Set( ( await blocklistRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
-				if ( domains.has( hostname ) || domains.has( 'www.' + hostname ) ) {
-					return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
-				}
+			if ( !blocklistRes ) {
+				return new Response( JSON.stringify( { error: 'DEBUG: blocklistRes is null, freshRes.status=' + freshRes.status } ), { status: 400, headers } );
 			}
+			if ( !blocklistRes.ok ) {
+				return new Response( JSON.stringify( { error: 'DEBUG: blocklistRes.ok is false, status=' + blocklistRes.status } ), { status: 400, headers } );
+			}
+			const domains = new Set( ( await blocklistRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
+			if ( !domains.has( hostname ) && !domains.has( 'www.' + hostname ) ) {
+				return new Response( JSON.stringify( { error: 'DEBUG: hostname ' + hostname + ' not found in ' + domains.size + ' domains' } ), { status: 400, headers } );
+			}
+			return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
 		}
 		const existing = await env.ZERO_LINKS.get( 'url:' + normalized );
 		if ( existing ) {
