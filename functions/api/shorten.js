@@ -44,6 +44,7 @@ export async function onRequestPost( { request, env } ) {
 		'Content-Type': 'application/json',
 		'Access-Control-Allow-Origin': '*'
 	};
+	const t = { start: Date.now() };
 	try {
 		const body = await request.json();
 		const { url, turnstileToken } = body;
@@ -64,11 +65,14 @@ export async function onRequestPost( { request, env } ) {
 			return new Response( JSON.stringify( { error: 'IP address URLs are not allowed.' } ), { status: 400, headers } );
 		}
 		const ip = request.headers.get( 'CF-Connecting-IP' ) || '';
+		t.beforeTurnstile = Date.now() - t.start;
 		const valid = await verifyTurnstile( turnstileToken, ip, env.TURNSTILE_SECRET );
+		t.afterTurnstile = Date.now() - t.start;
 		if ( !valid ) {
 			return new Response( JSON.stringify( { error: 'Verification failed.' } ), { status: 403, headers } );
 		}
 		const hostname = extractHostname( normalized );
+		t.beforeBlocklist = Date.now() - t.start;
 		if ( hostname ) {
 			const cache = caches.default;
 			const lists = [
@@ -95,6 +99,7 @@ export async function onRequestPost( { request, env } ) {
 				}
 			}
 		}
+		t.afterBlocklist = Date.now() - t.start;
 		const existing = await env.ZERO_LINKS.get( 'url:' + normalized );
 		if ( existing ) {
 			return new Response( JSON.stringify( { slug: existing } ), { headers } );
@@ -113,7 +118,8 @@ export async function onRequestPost( { request, env } ) {
 		}
 		await env.ZERO_LINKS.put( 'slug:' + slug, normalized );
 		await env.ZERO_LINKS.put( 'url:' + normalized, slug );
-		return new Response( JSON.stringify( { slug } ), { headers } );
+		t.total = Date.now() - t.start;
+		return new Response( JSON.stringify( { slug, debug: t } ), { headers } );
 	} catch( e ) {
 		return new Response( JSON.stringify( { error: 'Invalid request.' } ), { status: 400, headers } );
 	}
