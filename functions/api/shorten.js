@@ -44,7 +44,6 @@ export async function onRequestPost( { request, env } ) {
 		'Content-Type': 'application/json',
 		'Access-Control-Allow-Origin': '*'
 	};
-	const t = { start: Date.now() };
 	try {
 		const body = await request.json();
 		const { url, turnstileToken } = body;
@@ -65,32 +64,33 @@ export async function onRequestPost( { request, env } ) {
 			return new Response( JSON.stringify( { error: 'IP address URLs are not allowed.' } ), { status: 400, headers } );
 		}
 		const ip = request.headers.get( 'CF-Connecting-IP' ) || '';
-		t.beforeTurnstile = Date.now() - t.start;
 		const valid = await verifyTurnstile( turnstileToken, ip, env.TURNSTILE_SECRET );
-		t.afterTurnstile = Date.now() - t.start;
 		if ( !valid ) {
 			return new Response( JSON.stringify( { error: 'Verification failed.' } ), { status: 403, headers } );
 		}
 		const hostname = extractHostname( normalized );
-		t.beforeBlocklist = Date.now() - t.start;
-		console.log( 'beforeBlocklist', t.beforeBlocklist );
 		if ( hostname ) {
 			const cache = caches.default;
 			const lists = [
 				'https://raw.githubusercontent.com/0projects/linkzero/main/blocklist.txt',
 				'https://raw.githubusercontent.com/PeterDaveHello/url-shorteners/master/list',
-				'https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/tif.txt'
+				// 'https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/tif.txt'
 			];
 			for ( const listUrl of lists ) {
 				const cacheKey = new Request( listUrl );
 				let listRes = await cache.match( cacheKey );
-				if ( !listRes ) {
-					const freshRes = await fetch( listUrl );
-					if ( freshRes.ok ) {
-						const text = await freshRes.text();
-						listRes = new Response( text, { headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=86400' } } );
-						await cache.put( cacheKey, listRes.clone() );
-					}
+				const fetchHeaders = {};
+				if ( listRes ) {
+					const etag = listRes.headers.get( 'ETag' );
+					if ( etag ) fetchHeaders['If-None-Match'] = etag;
+				}
+				const freshRes = await fetch( listUrl, { headers: fetchHeaders } );
+				if ( freshRes.status === 200 ) {
+					const text = await freshRes.text();
+					listRes = new Response( text, { headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=31536000', 'ETag': freshRes.headers.get( 'ETag' ) || '' } } );
+					await cache.put( cacheKey, listRes.clone() );
+				} else if ( freshRes.status !== 304 ) {
+					listRes = null;
 				}
 				if ( listRes && listRes.ok ) {
 					const domains = new Set( ( await listRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
@@ -100,8 +100,6 @@ export async function onRequestPost( { request, env } ) {
 				}
 			}
 		}
-		t.afterBlocklist = Date.now() - t.start;
-		console.log( 'afterBlocklist', t.afterBlocklist );
 		const existing = await env.ZERO_LINKS.get( 'url:' + normalized );
 		if ( existing ) {
 			return new Response( JSON.stringify( { slug: existing } ), { headers } );
@@ -120,8 +118,7 @@ export async function onRequestPost( { request, env } ) {
 		}
 		await env.ZERO_LINKS.put( 'slug:' + slug, normalized );
 		await env.ZERO_LINKS.put( 'url:' + normalized, slug );
-		t.total = Date.now() - t.start;
-		return new Response( JSON.stringify( { slug, debug: t } ), { headers } );
+		return new Response( JSON.stringify( { slug } ), { headers } );
 	} catch( e ) {
 		return new Response( JSON.stringify( { error: 'Invalid request.' } ), { status: 400, headers } );
 	}

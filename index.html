@@ -478,8 +478,9 @@
 			widgetId = turnstile.render( widgetContainer, {
 				sitekey: SITE_KEY,
 				theme: 'dark',
-				appearance: 'execute',
-				// appearance: 'interaction-only',
+				execution: 'execute',
+				// appearance: 'execute',
+				appearance: 'interaction-only',
 				callback: onTurnstileSuccess,
 				'error-callback': onTurnstileError,
 				'expired-callback': onTurnstileExpired
@@ -553,7 +554,6 @@
 					body: JSON.stringify( { url: input.value.trim(), turnstileToken: token } )
 				} );
 				const data = await res.json();
-				console.log( 'timing:', data.debug );
 				btn.disabled = false;
 				if ( data.error ) {
 					setError( data.error );
