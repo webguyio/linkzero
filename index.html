@@ -470,6 +470,7 @@
 		let widgetId = null;
 		let widgetContainer = null;
 		let pendingAction = null;
+		let cachedToken = null;
 
 		function renderTurnstile() {
 			if ( typeof turnstile === 'undefined' ) return;
@@ -477,7 +478,6 @@
 			widgetId = turnstile.render( widgetContainer, {
 				sitekey: SITE_KEY,
 				theme: 'dark',
-				execution: 'execute',
 				appearance: 'execute',
 				// appearance: 'interaction-only',
 				callback: onTurnstileSuccess,
@@ -489,10 +489,13 @@
 		function onTurnstileSuccess( token ) {
 			if ( pendingAction === 'unshorten' ) {
 				submitUnshorten( token );
-			} else {
+				pendingAction = null;
+			} else if ( pendingAction === 'shorten' ) {
 				submitUrl( token );
+				pendingAction = null;
+			} else {
+				cachedToken = token;
 			}
-			pendingAction = null;
 		}
 
 		function onTurnstileError() {
@@ -502,6 +505,7 @@
 		}
 
 		function onTurnstileExpired() {
+			cachedToken = null;
 			if ( widgetId !== null ) turnstile.reset( widgetId );
 		}
 
@@ -560,7 +564,9 @@
 				setError( 'Something went wrong. Please try again.' );
 				btn.disabled = false;
 			}
-			if ( widgetId !== null ) turnstile.reset( widgetId );
+			if ( widgetId !== null ) {
+				turnstile.reset( widgetId );
+			}
 		}
 
 		async function submitUnshorten( token ) {
@@ -580,10 +586,12 @@
 				setError( 'Something went wrong. Please try again.' );
 			}
 			unshortenBtn.disabled = false;
-			if ( widgetId !== null ) turnstile.reset( widgetId );
+			if ( widgetId !== null ) {
+				turnstile.reset( widgetId );
+			}
 		}
 
-		unshortenBtn.addEventListener( 'click', () => {
+		function executeWithToken( action, disabledBtn ) {
 			const url = input.value.trim();
 			if ( !url ) {
 				setError( 'Please enter a URL.' );
@@ -592,33 +600,28 @@
 			status.className = '';
 			status.textContent = '';
 			status.style.display = 'none';
-			unshortenBtn.disabled = true;
-			if ( typeof turnstile !== 'undefined' && widgetId !== null ) {
-				pendingAction = 'unshorten';
-				turnstile.execute( widgetContainer );
-			} else {
+			disabledBtn.disabled = true;
+			if ( typeof turnstile === 'undefined' || widgetId === null ) {
 				setError( 'Verification unavailable. Please reload and try again.' );
-				unshortenBtn.disabled = false;
+				disabledBtn.disabled = false;
+				return;
 			}
-		} );
+			if ( cachedToken ) {
+				const token = cachedToken;
+				cachedToken = null;
+				if ( action === 'unshorten' ) {
+					submitUnshorten( token );
+				} else {
+					submitUrl( token );
+				}
+			} else {
+				pendingAction = action;
+				turnstile.execute( widgetContainer );
+			}
+		}
 
-		btn.addEventListener( 'click', () => {
-			const url = input.value.trim();
-			if ( !url ) {
-				setError( 'Please enter a URL.' );
-				return;
-			}
-			status.className = '';
-			status.textContent = '';
-			status.style.display = 'none';
-			btn.disabled = true;
-			if ( typeof turnstile !== 'undefined' && widgetId !== null ) {
-				turnstile.execute( widgetContainer );
-			} else {
-				setError( 'Verification unavailable. Please reload and try again.' );
-				btn.disabled = false;
-			}
-		} );
+		unshortenBtn.addEventListener( 'click', () => executeWithToken( 'unshorten', unshortenBtn ) );
+		btn.addEventListener( 'click', () => executeWithToken( 'shorten', btn ) );
 
 		input.addEventListener( 'keydown', ( e ) => {
 			if ( e.key === 'Enter' ) btn.click();
