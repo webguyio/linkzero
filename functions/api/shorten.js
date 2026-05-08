@@ -73,6 +73,7 @@ export async function onRequestPost( { request, env } ) {
 		}
 		const hostname = extractHostname( normalized );
 		t.beforeBlocklist = Date.now() - t.start;
+		console.log( 'beforeBlocklist', t.beforeBlocklist );
 		if ( hostname ) {
 			const cache = caches.default;
 			const lists = [
@@ -100,6 +101,7 @@ export async function onRequestPost( { request, env } ) {
 			}
 		}
 		t.afterBlocklist = Date.now() - t.start;
+		console.log( 'afterBlocklist', t.afterBlocklist );
 		const existing = await env.ZERO_LINKS.get( 'url:' + normalized );
 		if ( existing ) {
 			return new Response( JSON.stringify( { slug: existing } ), { headers } );
