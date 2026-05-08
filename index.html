@@ -377,6 +377,7 @@
 				<button type="button" id="shorten-btn" class="action-btn">Shorten</button>
 				<button type="button" id="unshorten-btn" class="action-btn">Unshorten</button>
 			</div>
+			<div id="turnstile-container"></div>
 			<div id="status" role="status" aria-live="polite"></div>
 		</div>
 
@@ -467,13 +468,10 @@
 
 		function renderTurnstile() {
 			if ( typeof turnstile === 'undefined' ) return;
-			widgetContainer = document.createElement( 'div' );
-			widgetContainer.style.display = 'none';
-			document.body.appendChild( widgetContainer );
+			widgetContainer = document.getElementById( 'turnstile-container' );
 			widgetId = turnstile.render( widgetContainer, {
 				sitekey: SITE_KEY,
-				size: 'invisible',
-				execution: 'execute',
+				theme: 'dark',
 				callback: onTurnstileSuccess,
 				'error-callback': onTurnstileError,
 				'expired-callback': onTurnstileExpired
