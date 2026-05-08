@@ -553,6 +553,7 @@
 					body: JSON.stringify( { url: input.value.trim(), turnstileToken: token } )
 				} );
 				const data = await res.json();
+				console.log( 'timing:', data.debug );
 				btn.disabled = false;
 				if ( data.error ) {
 					setError( data.error );
