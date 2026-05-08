@@ -79,18 +79,13 @@ export async function onRequestPost( { request, env } ) {
 			for ( const listUrl of lists ) {
 				const cacheKey = new Request( listUrl );
 				let listRes = await cache.match( cacheKey );
-				const fetchHeaders = {};
-				if ( listRes ) {
-					const etag = listRes.headers.get( 'ETag' );
-					if ( etag ) fetchHeaders['If-None-Match'] = etag;
-				}
-				const freshRes = await fetch( listUrl, { headers: fetchHeaders } );
-				if ( freshRes.status === 200 ) {
-					const text = await freshRes.text();
-					listRes = new Response( text, { headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=31536000', 'ETag': freshRes.headers.get( 'ETag' ) || '' } } );
-					await cache.put( cacheKey, listRes.clone() );
-				} else if ( freshRes.status !== 304 ) {
-					listRes = null;
+				if ( !listRes ) {
+					const freshRes = await fetch( listUrl );
+					if ( freshRes.ok ) {
+						const text = await freshRes.text();
+						listRes = new Response( text, { headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=86400' } } );
+						await cache.put( cacheKey, listRes.clone() );
+					}
 				}
 				if ( listRes && listRes.ok ) {
 					const domains = new Set( ( await listRes.text() ).split( '\n' ).filter( line => line && !line.startsWith( '#' ) ) );
