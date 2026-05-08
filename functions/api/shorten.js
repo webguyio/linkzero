@@ -7,7 +7,8 @@ async function verifyTurnstile( token, ip, secret ) {
 		body: JSON.stringify( { secret, response: token, remoteip: ip } )
 	} );
 	const data = await res.json();
-	return data.success === true;
+	if ( !data.success ) throw new Error( 'Turnstile: ' + JSON.stringify( data ) );
+	return true;
 }
 
 function normalizeUrl( raw ) {
@@ -120,7 +121,7 @@ export async function onRequestPost( { request, env } ) {
 		await env.ZERO_LINKS.put( 'url:' + normalized, slug );
 		return new Response( JSON.stringify( { slug } ), { headers } );
 	} catch( e ) {
-		return new Response( JSON.stringify( { error: 'Invalid request.' } ), { status: 400, headers } );
+		return new Response( JSON.stringify( { error: e.message || 'Invalid request.' } ), { status: 400, headers } );
 	}
 }
 
