@@ -14,8 +14,9 @@ function normalizeUrl( raw ) {
 	try {
 		const parsed = new URL( raw );
 		const host = parsed.hostname.toLowerCase();
-		const path = parsed.pathname.replace( /\/+$/, '' ) + parsed.search + parsed.hash;
-		return parsed.protocol + '//' + host + ( path || '/' );
+		const pathname = parsed.pathname.replace( /\/+$/, '' ) || '/';
+		const path = pathname + parsed.search + parsed.hash;
+		return parsed.protocol + '//' + host + path;
 	} catch( e ) {
 		return null;
 	}
