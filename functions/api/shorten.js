@@ -100,6 +100,13 @@ export async function onRequestPost( { request, env } ) {
 				}
 			}
 		}
+		if ( hostname ) {
+			const apiRes = await fetch( 'https://api.lk0.org/check?domain=' + encodeURIComponent( hostname ) );
+			const apiData = await apiRes.json();
+			if ( apiData.blocked ) {
+				return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
+			}
+		}
 		const existing = await env.ZERO_LINKS.get( 'url:' + normalized );
 		if ( existing ) {
 			return new Response( JSON.stringify( { slug: existing } ), { headers } );
