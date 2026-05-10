@@ -637,6 +637,7 @@
 			if ( window.location.search.includes( '404=1' ) ) {
 				setError( 'That short link does not exist.' );
 			}
+			fetch( 'https://api.lk0.org/check?domain=warmup' ).catch( () => {} );
 		} );
 	</script>
 
