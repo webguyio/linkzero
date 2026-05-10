@@ -108,10 +108,6 @@ export async function onRequestPost( { request, env } ) {
 				return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
 			}
 		}
-		const existing = await env.ZERO_LINKS.get( 'url:' + normalized );
-		if ( existing ) {
-			return new Response( JSON.stringify( { slug: existing } ), { headers } );
-		}
 		let slug;
 		for ( let i = 0; i < 5; i++ ) {
 			const candidate = generateSlug();
@@ -125,7 +121,6 @@ export async function onRequestPost( { request, env } ) {
 			return new Response( JSON.stringify( { error: 'Could not generate a unique slug. Please try again.' } ), { status: 500, headers } );
 		}
 		await env.ZERO_LINKS.put( 'slug:' + slug, normalized );
-		await env.ZERO_LINKS.put( 'url:' + normalized, slug );
 		return new Response( JSON.stringify( { slug } ), { headers } );
 	} catch( e ) {
 		return new Response( JSON.stringify( { error: 'Invalid request.' } ), { status: 400, headers } );

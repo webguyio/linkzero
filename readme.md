@@ -10,7 +10,6 @@ The safest link shortener on the web. No tracking, no accounts, no agenda.
 - No account required
 - Zero data collected about you or your link's visitors
 - Known malicious domains are blocked
-- Duplicate URLs return the same short link
 
 ## Report a malicious link
 
