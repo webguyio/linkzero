@@ -120,7 +120,7 @@ export async function onRequestPost( { request, env } ) {
 		if ( !slug ) {
 			return new Response( JSON.stringify( { error: 'Could not generate a unique slug. Please try again.' } ), { status: 500, headers } );
 		}
-		await env.ZERO_LINKS.put( 'slug:' + slug, normalized );
+		await env.ZERO_LINKS.put( slug, normalized );
 		return new Response( JSON.stringify( { slug } ), { headers } );
 	} catch( e ) {
 		return new Response( JSON.stringify( { error: 'Invalid request.' } ), { status: 400, headers } );

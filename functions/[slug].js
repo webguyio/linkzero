@@ -3,7 +3,7 @@ export async function onRequestGet( { request, env, params } ) {
 	if ( !slug || slug.length !== 6 ) {
 		return new Response( null, { status: 302, headers: { Location: '/' } } );
 	}
-	const url = await env.ZERO_LINKS.get( 'slug:' + slug );
+	const url = await env.ZERO_LINKS.get( slug );
 	if ( !url ) {
 		return new Response( null, { status: 302, headers: { Location: '/?404=1' } } );
 	}
