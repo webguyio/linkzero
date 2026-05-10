@@ -74,7 +74,6 @@ export async function onRequestPost( { request, env } ) {
 			const lists = [
 				'https://raw.githubusercontent.com/0projects/linkzero/main/blocklist.txt',
 				'https://raw.githubusercontent.com/PeterDaveHello/url-shorteners/master/list',
-				// 'https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/tif.txt'
 			];
 			for ( const listUrl of lists ) {
 				const cacheKey = new Request( listUrl );
@@ -101,14 +100,11 @@ export async function onRequestPost( { request, env } ) {
 			}
 		}
 		if ( hostname ) {
-			try {
-				const apiRes = await fetch( 'https://api.lk0.org/check?domain=' + encodeURIComponent( hostname ) );
-				const apiData = await apiRes.json();
-				if ( apiData.blocked ) {
-					return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
-				}
-			} catch( e ) {
-				return new Response( JSON.stringify( { error: 'Busy. Please press Shorten again.' } ), { status: 503, headers } );
+			const result = await env.DB.prepare(
+				'SELECT 1 FROM domains WHERE domain = ?'
+			).bind( hostname ).first();
+			if ( result ) {
+				return new Response( JSON.stringify( { error: 'This domain is not allowed.' } ), { status: 400, headers } );
 			}
 		}
 		const existing = await env.ZERO_LINKS.get( 'url:' + normalized );
